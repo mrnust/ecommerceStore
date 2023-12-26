@@ -1,29 +1,33 @@
 // App.js
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AddCategoryForm from './Components/Admin_Form_Category';
 import AddProductForm from './Components/Admin_Form_Product';
 import VerticalNavbar from './Components/Admin_navbar';
 import Home from './Components/Home';
 import Slider from './Components/Slider';
+import Inventory from './Components/Inventory';
+import Promocode from './Components/Promocode';
+import CustomerManag from './Components/CustomerManag';
 
 function App() {
-  const [activeForm, setActiveForm] = useState('home'); // Set 'home' as the initial activeForm
-
-  const handleSelectForm = (form) => {
-    setActiveForm(form);
-  };
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <VerticalNavbar onSelectForm={handleSelectForm} />
-        {/* Render the form based on activeForm */}
-        {activeForm === 'home' && <Home />}
-        {activeForm === 'addProduct' && <AddProductForm />}
-        {activeForm === 'addCategory' && <AddCategoryForm />}
-        {activeForm === 'slider' && <Slider />}
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <header className="App-header">
+          <VerticalNavbar />
+          <Switch>
+            <Route path="/" exact component={Home} />
+            <Route path="/addProduct" component={AddProductForm} />
+            <Route path="/addCategory" component={AddCategoryForm} />
+            <Route path="/slider" component={Slider} />
+            <Route path="/inventory" component={Inventory} />
+            <Route path="/promocode" component={Promocode} />
+            <Route path="/customerManagement" component={CustomerManag} />
+          </Switch>
+        </header>
+      </div>
+    </Router>
   );
 }
 
