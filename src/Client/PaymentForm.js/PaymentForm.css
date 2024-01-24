@@ -1,0 +1,17 @@
+/* PaymentForm.css */
+.payment-form {
+    display: flex;
+    flex-direction: column;
+    width: 500px; /* Set your desired width */
+    margin: auto;
+    text-align: center;
+  }
+  
+  .card-element {
+    height: 100px; /* Set your desired height */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  

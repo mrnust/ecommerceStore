@@ -46,3 +46,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.toast-error {
+  background-color: #ff4d4f !important;
+  color: #fff !important;
+}
+
+.toast-success {
+  background-color: #52c41a !important;
+  color:#fff !important;
+}
+
+
+.animate__animated.animate__bounce {
+  --animate-duration: 2s;
+}

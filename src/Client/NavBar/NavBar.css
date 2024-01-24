@@ -1,0 +1,91 @@
+/* .dropdown-categories{
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 120%;
+    margin: 0;
+    width: 100%;
+    background: #ffffff;
+    visibility: hidden;
+    opacity: 0;
+    z-index: 1;
+    box-shadow: 0 0 25px rgba(63, 78, 100, 0.15);
+    -webkit-transition: opacity 0.3s ease;
+    -moz-transition: opacity 0.3s ease;
+    -ms-transition: opacity 0.3s ease;
+    -o-transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
+}
+.dropdown-categories li{
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 50px;
+}
+.account_selection {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 120%;
+    margin: 0;
+    width: 100%;
+    background: #ffffff;
+    visibility: hidden;
+    opacity: 0;
+    z-index: 1;
+    box-shadow: 0 0 25px rgba(63, 78, 100, 0.15);
+    -webkit-transition: opacity 0.3s ease;
+    -moz-transition: opacity 0.3s ease;
+    -ms-transition: opacity 0.3s ease;
+    -o-transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  .account_selection li {
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 50px;
+  }
+  .dropdown-categories li a {
+    display: block;
+    color: #232530;
+    border-bottom: solid 1px #dddddd;
+    font-size: 14px;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  .dropdown-categories li a:hover {
+    color: #b5aec4;
+    text-decoration: none;
+  }
+  .dropdown-categories li:last-child a {
+    border-bottom: none;
+  }
+  .dropdown-categories li a i {
+    margin-right: 10px;
+  } */
+
+  .dropdown-categories {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+  }
+  .dropdown-categories li:hover {
+    color: #b5aec4;
+    text-decoration: none;
+  }
+  .mega-drop-down{
+    cursor: pointer;
+  }
+  .mega-drop-down:hover .dropdown-categories {
+    /* cursor: pointer; */
+    display: block;
+  }
+  /* .mega-drop-down:hover{
+    color: #b5aec4;
+    text-decoration: none;
+  } */
+  
