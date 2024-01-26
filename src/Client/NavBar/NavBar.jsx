@@ -21,8 +21,13 @@ const NavBar = (
   const [cart, setCart] = useState({});
   const [modalShow, setModalShow] = useState(false);
   const [activeclass, setActiveClass] = useState(false);
+  const [c,setC]=useState(Number(localStorage.getItem('count')))
   const history = useHistory();
 
+  useEffect(() => {
+    setC(localStorage.getItem('count'));
+  }, [localStorage.getItem('count')])
+  
   const getCartItems = () => {
     let Cart = [];
     if (localStorage.SCLOCALCART) {
@@ -45,6 +50,7 @@ const NavBar = (
   const clearCart = () => {
     setCart([]);
     localStorage.setItem("SCLOCALCART", JSON.stringify([]));
+    localStorage.setItem('count', 0);
   };
 
   // Update cart quantity function to be passed to HomeCartView
@@ -141,13 +147,13 @@ const NavBar = (
                   </a> */}
                 </li>
                 {/* Add a conditional rendering for the user profile link */}
-                {localStorage.getItem('USERID') !== null ? (
+                {localStorage.getItem('USERSTATUS') !== 'GUEST' ? (
                   <Link to="/viewProfile">
                     <i style={{ fontSize: '18px',color:'black',position:'relative',left:'-20px'}} className="fa fa-user" aria-hidden="true"></i>
                   </Link>
                 ) : (
                   // You can add a disabled style or render null based on your requirement
-                  <span style={{ fontSize: '18px', color: 'gray' }}>
+                  <span style={{ fontSize: '18px', color: 'gray',position:'relative',left:'-30px' }}>
                     <i className="fa fa-user" aria-hidden="true"></i>
                   </span>
                 )}
@@ -158,7 +164,7 @@ const NavBar = (
                     {
                       // cart.totalQty !== undefined &&
                       <span style={{marginLeft:'-10px'}} id="checkout_items" className="checkout_items">
-                        {/* {cart.totalQty} */}0
+                        {/* {cart.totalQty} */}{c}
                       </span>
                     }
                   </div>

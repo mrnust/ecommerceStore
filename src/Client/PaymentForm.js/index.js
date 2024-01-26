@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import axios from 'axios';
-import "./PaymentForm.css"
+import "./PaymentForm.css";
+import { toast, ToastContainer } from 'react-toastify';
+
 const PaymentForm = () => {
   const stripe = useStripe();
   const elements = useElements();
@@ -36,8 +38,16 @@ const PaymentForm = () => {
 
     if (error) {
       console.error('Payment failed:', error.message);
+      toast.error(`Payment failed..`, {
+                position: 'top-center',
+                className: 'toast-error',
+            });
     } else if (paymentIntent) {
       console.log('Payment succeeded:', paymentIntent);
+      toast.success(`Payment done sucessfully..`, {
+                position: 'top-center',
+                className: 'toast-success',
+            });
     }
   };
   const cardElementStyle = {
@@ -52,12 +62,15 @@ const PaymentForm = () => {
     },
   };
   return (
+    <>
     <form onSubmit={handlePayment} className="payment-form">
       <CardElement className="card-element" options={{ style: cardElementStyle }}/>
       <button type="submit" disabled={!stripe}>
         Pay
       </button>
-    </form>
+      </form>
+      <ToastContainer position="top-center" autoClose={4000} />
+      </>
   );
 };
 

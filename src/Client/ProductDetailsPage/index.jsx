@@ -30,7 +30,9 @@ console.log(product);
     }
   };
   // const AddArray = product.imageURLs[0];
-    const AddToCart = (item) => {
+  const AddToCart = (item) => {
+      let num = Number(localStorage.getItem('count'));
+    localStorage.setItem('count', num + 1);
       console.log("Add to cart:",item);
       if(quantity!==0){
         let newProduct = {

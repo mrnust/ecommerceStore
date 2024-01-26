@@ -13,6 +13,7 @@ import Footer from '../Footer'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { InputAdornment, IconButton } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
+import './CategoriesPage.css';
 // import Input from "postcss/lib/input";
 
 const CategoriesPage = (props) => {
@@ -61,6 +62,8 @@ const CategoriesPage = (props) => {
 
   //set items in Local Storage
   const AddToLocalCart = (item) => {
+    let num = Number(localStorage.getItem('count'));
+    localStorage.setItem('count', num + 1);
     console.log("Add to cart:", item);
     let product = {
       productID: item.productID,

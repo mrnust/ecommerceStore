@@ -1,6 +1,6 @@
 // App.js
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch,useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch,useLocation,Redirect } from 'react-router-dom';
 import AddCategoryForm from './AdminComponents/Admin_Form_Category';
 import AddProductForm from './AdminComponents/Admin_Form_Product';
 import VerticalNavbar from './AdminComponents/Admin_navbar';
@@ -52,60 +52,62 @@ function App() {
   const hideHeader = ['/hide'];
   console.log(location.pathname)
 
+
+  const isAdmin = localStorage.getItem('USERSTATUS')!='LOGGED_IN' && localStorage.getItem('USERSTATUS')!='GUEST';
+  
   return (
     <Router>
       <div className="main-wrapper">
         <div className="super_container">
-        {/* {
-        !hideHeader.includes(location.pathname)
-         && (
-            <header className="header trans_300">
-              <TopNavBar className={topHeaderClass} />
-              <NavBar />
-            </header>
-          )} */}
+          
           <Switch>
-            {/* <Route path="/" exact component={Home} />
-            <Route path="/addProduct" component={AddProductForm} />
-            <Route path="/addCategory" component={AddCategoryForm} />
-            <Route path="/slider" component={Slider} />
-            <Route path="/inventory" component={Inventory} />
-            <Route path="/promocode" component={Promocode} />
-            <Route path="/customerManagement" component={CustomerManag} />
-            <Route path="/signup" component={Signup}/>
-            <Route path="/login" component={Login} />
-            <Route path="/forgot-password" component={ForgotPassword}/> */}
-
-                <Route path="/" exact component={BaseLayout} />
+            {isAdmin ? (
+              <Switch>
                 <Route path="/admin" exact component={Home} />
-            
-
                 <Route path="/addProduct" component={AddProductForm} />
                 <Route path="/addCategory" component={AddCategoryForm} />
                 <Route path="/slider" component={Slider} />
                 <Route path="/inventory" component={Inventory} />
                 <Route path="/promocode" component={Promocode} />
                 <Route path="/customerManagement" component={CustomerManag} />
-            
-
+                <Route path="/notAccessible">
+                  <div>
+                    <h1>Not Accessible</h1>
+                    <p>This page is not accessible to your role.</p>
+                  </div>
+                </Route>
+                {/* Redirect to the not accessible page for other routes */}
+                <Redirect to="/notAccessible" />
+              </Switch>
+            ) : (
+              <Switch>
+                <Route path="/" exact component={BaseLayout} />
                 <Route path="/contact" component={ContactPage} />
                 <Route path="/categories" component={CategoriesPage} />
                 <Route path="/orderSummary" component={OrderSummaryPage} />
                 <Route path="/productDetailsPage" component={ProductDetailsPage} />
                 <Route path="/login" component={Login} />
-                <Route path="/Signup" component={Signup} />
+                <Route path="/signup" component={Signup} />
                 <Route path="/stripePaymentForm">
                   <Elements stripe={stripePromise}>
                     <PaymentForm />
                   </Elements>
-               </Route>
-                <Route path="/signup" component={Signup}/>
-                <Route path="/login" component={Login} />
-                <Route path="/viewProfile" component={UpdateProfile}/>
-            
+                </Route>
+                  <Route path="/viewProfile" component={UpdateProfile} />
+                  <Route path="/viewProfile" component={UpdateProfile} />
+                {/* Add a route for the not accessible page */}
+                <Route path="/notAccessible">
+                  <div>
+                    <h1>Not Accessible</h1>
+                    <p>This page is not accessible to your role.</p>
+                  </div>
+                </Route>
+                {/* Redirect to the not accessible page for other routes */}
+                <Redirect to="/notAccessible" />
+              </Switch>
+            )}
           </Switch>
           {/* <Footer /> */}
-          
         </div>
       </div>
     </Router>

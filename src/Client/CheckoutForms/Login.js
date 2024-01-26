@@ -38,6 +38,7 @@ const Login = () => {
     console.log('Email:', email);
     console.log('Password:', password);
     if (email == "admin" && password == "admin") {
+      localStorage.setItem('USERSTATUS', 'ADMIN');
       history.push("/admin");
     }
 

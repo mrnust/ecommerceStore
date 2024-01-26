@@ -62,7 +62,7 @@ const ForgotPassword = () => {
 
   const handleSignup = () => {
     // Your signup logic here
-    console.log('Name:', name);
+    // console.log('Name:', name);
     console.log('Email:', email);
     console.log('Password:', password);
     console.log('Confirm Password:', confirmPassword);

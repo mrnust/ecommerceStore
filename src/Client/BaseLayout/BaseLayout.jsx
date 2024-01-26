@@ -65,7 +65,7 @@ const BaseLayout = (props) => {
             const imagesSnapshot = await get(imagesRef);
       
             if (imagesSnapshot.exists()) {
-              console.log("recs exist")
+              // console.log("recs exist")
               const storage = getStorage();
               // console.log("recs exist")
               const imagesData = imagesSnapshot.val();

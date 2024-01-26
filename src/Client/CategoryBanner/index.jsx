@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "aos/dist/aos.css";
+
 // import { storage } from "../../../firebaseconfig";
 // import {
 //   getStorage,
@@ -64,8 +65,8 @@ function CategoryBanner(props) {
   // }, []); // Empty dependency array ensures useEffect runs only once
 
   return (
-    <div className="banner">
-      <div className="container">
+    <div  className="banner">
+      <div style={{animationDelay:'2s'}} className="animate__animated animate__swing container" >
         <div className="row">
           {categoryImages.map((categoryImage, index) => (
             <div key={index} className="col-md-4" style={{ paddingTop: "2em" }}>

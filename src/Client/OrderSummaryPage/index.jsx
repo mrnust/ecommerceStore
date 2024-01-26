@@ -215,12 +215,29 @@ const OrderSummaryPage = () => {
   //   }
   // };
   const handlePlaceOrder = () => {
+
+    if (paymentMethod == '') {
+      toast.error(`Enter the payment Method...`, {
+                position: 'top-center',
+                className: 'toast-error',
+      });
+      return;
+    }
+    if (address == '') {
+      toast.error(`Enter the address...`, {
+                position: 'top-center',
+                className: 'toast-error',
+      });
+      return;
+    }
     if (paymentMethod === "CREDIT_DEBIT_CARD") {
+      localStorage.setItem('count', 0);
       // Disable Place Order button and clear input fields
       
       setAddress("");
       //code to show stripe form
     } else if (paymentMethod === "CASH_ON_DELIVERY") {
+      localStorage.setItem('count', 0);
       console.log("hello")
       // Show orange alert with confetti and redirect to "/"
       
@@ -261,9 +278,10 @@ const OrderSummaryPage = () => {
                   color: "white",
                   textDecoration: "none",
                   transition: "background-color 0.3s, color 0.3s",
+                  border:'1px solid orange'
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = "green";
+                  e.target.style.backgroundColor = "transparent";
                   e.target.style.color = "black";
                 }}
                 onMouseOut={(e) => {
@@ -308,7 +326,7 @@ const OrderSummaryPage = () => {
             <div className="payment-method bg-light p-4 rounded">
               <h3>Payment Method</h3>
               {/* Payment method buttons */}
-              <div className="payment-buttons">
+              <div style={{display:'flex',justifyContent:'center',alignItems:'center'}} className="payment-buttons">
                 <button
                   className={`btn btn-outline-secondary btn-block mb-2 ${
                     paymentMethod === "CREDID_DEBIT_CARD" ? "active" : ""
@@ -318,7 +336,7 @@ const OrderSummaryPage = () => {
                 >
                   Credit Card
                 </button>
-                <button
+                <button style={{position:'relative',top:'-3px',marginLeft:'5px'}}
                   className={`btn btn-outline-secondary btn-block ${
                     paymentMethod === "CASH_ON_DELIVERY" ? "active" : ""
                   }`}
