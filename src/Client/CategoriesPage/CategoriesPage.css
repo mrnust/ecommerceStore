@@ -54,3 +54,10 @@
 }
 
 /* Add other styles for the back of the card as needed */
+
+
+.out-of-stock {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  /* You can adjust the styles based on your design preferences */
+}

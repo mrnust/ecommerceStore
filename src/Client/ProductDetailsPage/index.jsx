@@ -18,21 +18,63 @@ const ProductDetailsPage = (props) => {
   const [show2, setShow2] = useState(false);
   const [show3, setShow3] = useState(false);
   const [quantity, setQuantity] = useState(0);
-  const [current, setCurrent] = useState(0);
-console.log(product);
+  const [current, setCurrent] = useState(0);  
+  const [curramount, setCurrAmount] = useState(0);
+  const [topHeaderClass, setTopHeaderClass] = useState("show");
+
+  console.log(product);
+  
+     const handleScroll = () => {
+    if (window.scrollY >= 50) {
+      setTopHeaderClass("hide");
+    } else {
+      setTopHeaderClass("show");
+    }
+  };
+
+   useEffect(() => {
+    window.scrollTo(0, 0);
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const location = useLocation();
+  const hideHeader = ['/hide'];
+  console.log(location.pathname)
+  
   const handlePlus = () => {
-    setQuantity(quantity + 1);
+    if (quantity < product.productStock) {
+      setCurrAmount(0);
+      let prev = quantity;
+      setQuantity(quantity + 1);
+      setCurrAmount((quantity-prev) );
+      
+  } else {
+    toast.warn(`Quantity cannot exceed ${product.productStock}`, { position: 'top-center', className: 'toast-warning' });
+  }
+
   };
   const handleMinus = () => {
-    setQuantity(quantity - 1);
-    if (quantity === 0) {
-      setQuantity(0);
-    }
+    if (quantity >0) {
+      setCurrAmount(0);
+      let prv = quantity;
+      setQuantity(quantity - 1);
+      setCurrAmount((prv-quantity));
+  } else {
+    toast.warn(`Quantity cannot be less than 0`, { position: 'top-center', className: 'toast-warning' });
+  }
   };
   // const AddArray = product.imageURLs[0];
   const AddToCart = (item) => {
+    setQuantity(0);
       let num = Number(localStorage.getItem('count'));
-    localStorage.setItem('count', num + 1);
+    // localStorage.setItem('count', num + 1);
+    // const num= Number(localStorage.getItem('count'));
+    localStorage.setItem('count', num + quantity)
+    
       console.log("Add to cart:",item);
       if(quantity!==0){
         let newProduct = {
@@ -41,6 +83,7 @@ console.log(product);
           productName: item.productName,
           productPrice: item.productPrice,
           productCategory: item.productCategory,
+          productStock: item.productStock,
           productQuantity: quantity,
         };
         let Cart = [];
@@ -96,28 +139,9 @@ console.log(product);
   };
 
 
-    const [topHeaderClass, setTopHeaderClass] = useState("show");
+    
   
-   const handleScroll = () => {
-    if (window.scrollY >= 50) {
-      setTopHeaderClass("hide");
-    } else {
-      setTopHeaderClass("show");
-    }
-  };
 
-   useEffect(() => {
-    window.scrollTo(0, 0);
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  const location = useLocation();
-  const hideHeader = ['/hide'];
-  console.log(location.pathname)
 
   return (
     //     <div className='hr'>

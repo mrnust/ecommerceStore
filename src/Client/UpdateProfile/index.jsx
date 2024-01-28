@@ -280,9 +280,9 @@ const handleInputChange = (field, value) => {
           <OrderDetails />
       </div>
       
-        <Link style={{display:'flex',justifyContent:'center',alignItems:'center',marginTop:'20px'}} to="/login">
+        {/* <Link style={{display:'flex',justifyContent:'center',alignItems:'center',marginTop:'20px'}} to="/login">
                 Login as Admin
-        </Link>
+        </Link> */}
       
       </div>
       <Footer />

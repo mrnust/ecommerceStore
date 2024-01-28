@@ -71,6 +71,7 @@ const CategoriesPage = (props) => {
       productName: item.productName,
       productPrice: item.productPrice,
       productCategory: item.productCategory,
+      productStock: item.productStock,
       productQuantity: 1,
     };
     let Cart = [];
@@ -271,7 +272,7 @@ useEffect(() => {
       >
         {searchArray.map((product) => (
           <div
-            className="card"
+            className={`card ${product.productStock === 0 ? 'out-of-stock' : ''}`}
             style={{ width: "18rem", margin: "10px" }}
             key={product.productID}
           >
@@ -293,6 +294,25 @@ useEffect(() => {
               <h5 className="card-title">{product.productName}</h5>
               <p className="card-text">{product.productDescription}</p>
               <p className="card-text">$ {product.productPrice}</p>
+               {product.productStock === 0 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-80%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: '#f00',
+                    color: '#fff',
+                    padding: '5px',
+                    borderRadius: '5px',
+                    zIndex: '1',
+                    width: '100%',
+                    height:'30%'
+                  }}
+                >
+                  Out of Stock
+                </div>
+              )}
               <div
                 style={{
                   display: "flex",
@@ -300,25 +320,39 @@ useEffect(() => {
                   justifyContent: "space-between",
                 }}
               >
-                <Link
-                to={{
-                  pathname: "/productDetailsPage",
-                  state: { product: product },
-                }}
-                  className="btn btn-primary"
-                  style={{
-                    backgroundColor: "#fe4c50",
-                    border: "none",
-                    float: "left",
-                  }}
-                >
-                  View Product
-                </Link>
+                 {product.productStock === 0 ? (
+                  <button
+                    className="btn btn-primary disabled"
+                    style={{
+                      backgroundColor: "#fe4c50",
+                      border: "none",
+                      float: "left",
+                    }}
+                    disabled
+                  >
+                    View Product
+                  </button>
+                ) : (
+                  <Link
+                    to={{
+                      pathname: "/productDetailsPage",
+                      state: { product: product },
+                    }}
+                    className="btn btn-primary"
+                    style={{
+                      backgroundColor: "#fe4c50",
+                      border: "none",
+                      float: "left",
+                    }}
+                  >
+                    View Product
+                  </Link>
+                )}
                 <i
-                  style={{ float: "right",cursor:"pointer"}}
+                  style={{ float: "right", cursor: "pointer", opacity: product.productStock === 0 ? 0.5 : 1 }}
                   id={product.productID}
-                  className="fas fa-shopping-bag"
-                  onClick={() => AddToLocalCart(product)}
+                  className={`fas fa-shopping-bag ${product.productStock === 0 ? 'disabled' : ''}`}
+                  onClick={() => product.productStock > 0 && AddToLocalCart(product)}
                 ></i>
               </div>
             </div>

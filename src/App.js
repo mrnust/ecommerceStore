@@ -53,10 +53,9 @@ function App() {
   console.log(location.pathname)
 
 
-  const isAdmin = localStorage.getItem('USERSTATUS')!='LOGGED_IN' && localStorage.getItem('USERSTATUS')!='GUEST';
-  
+  const isAdmin = localStorage.getItem('USERSTATUS')!='LOGGED_IN' && localStorage.getItem('USERSTATUS')!='GUEST' && localStorage.getItem('USERSTATUS')!=null;
   return (
-    <Router>
+    <Router >
       <div className="main-wrapper">
         <div className="super_container">
           
@@ -81,7 +80,9 @@ function App() {
               </Switch>
             ) : (
               <Switch>
-                <Route path="/" exact component={BaseLayout} />
+                  
+                {/* <Route path="/contact" component={ContactPage} /> */}
+                <Route path={["/", "/ecommerceStore"]} exact component={BaseLayout} />
                 <Route path="/contact" component={ContactPage} />
                 <Route path="/categories" component={CategoriesPage} />
                 <Route path="/orderSummary" component={OrderSummaryPage} />

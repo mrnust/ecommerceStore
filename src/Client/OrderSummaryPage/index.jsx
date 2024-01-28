@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 import { database } from "../../firebaseconfig";
-import { ref, onValue, off,set } from "firebase/database";
+import { ref, onValue, off,set,get } from "firebase/database";
 import { v4 as uuidv4 } from "uuid";
 import { useHistory } from "react-router-dom";
 import InputLabel from "@mui/material/InputLabel";
@@ -143,72 +143,96 @@ const OrderSummaryPage = () => {
   };
   
 
-  const Orderbutton = () => {
-    // 1)Fetch data of Cart against particular user
-    let array = JSON.parse(localStorage.getItem('SCLOCALCART'));
-            const arr=array.map(({ productID, productQuantity, productCategory }) => ({
-                            itemID: productID,
-                            quantity: productQuantity,
-                            itemCategory: productCategory
-                            }));
-     // fetch amount object from local storage
+const Orderbutton = () => {
+  // 1) Fetch data of Cart against a particular user
+  const cartArray = JSON.parse(localStorage.getItem('SCLOCALCART'));
+  const cartItems = cartArray.map(({ productID, productQuantity ,productCategory }) => ({
+    itemID: productID,
+    quantity: productQuantity,
+    itemCategory: productCategory
+  }));
 
-    console.log(amount)
-    
-     // generate orderId by uuid
+  // 2) Fetch amount object from local storage
+  const amount = JSON.parse(localStorage.AMOUNT);
 
-       const orderID = uuidv4();
-        console.log('orderid ', orderID);
+  // 3) Generate orderId by uuid
+  const orderID = uuidv4();
+  console.log('orderid ', orderID);
 
-     // get user by userid which is in local storage
+  // 4) Get user by userID which is in local storage
+  fetchuserData();
 
-        fetchuserData();
-        
-    const orderObject = {
-      "amount": amount,
-      "cart": arr,
-      "deliveryLocation": {
-        "address": {
-          "city": address,
-          "general": "949494949"
-        }
-      },
-      "orderID": orderID,
-      "paymentMethod": paymentMethod,
-      "receiver": {
-        "receiverName": userdata.userName,
-        "receiverPhoneNo": userdata.userPhoneNo
-      },//hardcoded as I don't have component, kindly put the user fetched using fetchUser function in your code
-      "status": "PENDING",
-      "timeStamp": Date.now()
-    }
-
-    //Finally write a firebase ftn to push this object against (Orders/`${userID}`/`${orderID}`)
-      const orderRef = ref(database, `Orders/${userId}/${orderID}`);
-
-        set(orderRef, orderObject)
-           .then(() => {
-            toast.success(`Order placed successfully`, {
-                position: 'top-center',
-                className: 'toast-success',
-            });
-
-            // Adding a delay before navigating to the next page
-            setTimeout(() => {
-                localStorage.removeItem('SCLOCALCART');
-                localStorage.removeItem('AMOUNT');
-                history.push("/");
-            }, 3000); // Adjust the delay as needed
-            })
-        .catch((error) => {
-            console.error('Error saving order to Firebase:', error);
-            toast.error(`Order Failed to Placed...`, {
-                position: 'top-center',
-                className: 'toast-error',
-            });
-            // Handle the error as needed
-        });
+  // 5) Prepare order object
+  const orderObject = {
+    amount: amount,
+    cart: cartItems,
+    deliveryLocation: {
+      address: {
+        city: address,
+        general: "949494949"
+      }
+    },
+    orderID: orderID,
+    paymentMethod: paymentMethod,
+    receiver: {
+      receiverName: userdata.userName,
+      receiverPhoneNo: userdata.userPhoneNo
+    },
+    status: "PENDING",
+    timeStamp: Date.now()
   };
+
+  // 6) Write to Firebase Orders table
+  const orderRef = ref(database, `Orders/${userId}/${orderID}`);
+  set(orderRef, orderObject)
+    .then(() => {
+      // 7) After order is placed successfully, update product stock
+      const productsRef = ref(database, "Products");
+      const productUpdates = cartItems.map((item) => {
+        const productRef = ref(database, `Products/${item.itemID}`);
+        return get(productRef)
+          .then((snapshot) => {
+            const productData = snapshot.val();
+            if (productData) {
+              const newStock = productData.productStock - item.quantity;
+              return set(productRef, { ...productData, productStock: newStock });
+            }
+            return null;
+          })
+          .catch((error) => {
+            console.error('Error updating product stock:', error);
+            return null;
+          });
+      });
+
+      // 8) Wait for all product stock updates to complete
+      return Promise.all(productUpdates);
+    })
+    .then(() => {
+      // 9) Order placed and product stock updated successfully
+      toast.success(`Order placed successfully`, {
+        position: 'top-center',
+        className: 'toast-success',
+      });
+
+      // Adding a delay before navigating to the next page
+      setTimeout(() => {
+        localStorage.removeItem('SCLOCALCART');
+        localStorage.removeItem('AMOUNT');
+        history.push("/");
+      }, 3000); // Adjust the delay as needed
+    })
+    .catch((error) => {
+      console.error('Error saving order to Firebase:', error);
+      toast.error(`Order Failed to Placed...`, {
+        position: 'top-center',
+        className: 'toast-error',
+      });
+      // Handle the error as needed
+    });
+};
+
+
   // const handleStripePayment = async () => {
   //   if (paymentMethod === "creditCard") {
   //     history.push("/stripePaymentForm");

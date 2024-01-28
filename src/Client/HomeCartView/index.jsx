@@ -26,6 +26,7 @@ const HomeCartView = ({
   const [promoCodes, setPromoCodes] = useState([]);
   const [enteredPromoCode, setEnteredPromoCode] = useState("");
   const [discountedAmount, setDiscountedAmount] = useState(0);
+  const [updateCart, setUpdateCart] = useState([]);
   const history = useHistory();
 
   useEffect(() => {
@@ -45,7 +46,31 @@ const HomeCartView = ({
     };
   }, []);
 
-  const handleQuantityChange = (itemId, newQuantity) => {
+
+    const handleRemoveItem = (itemId) => {
+    const removedItem = cart.find((item) => item.productID === itemId);
+    if (removedItem) {
+      // Calculate the count to be decremented
+      const countToDecrement = removedItem.productQuantity;
+
+      // Remove the item from the cart
+      removeItem(itemId);
+
+      // Decrement the count in local storage
+      const num = Number(localStorage.getItem('count'));
+      localStorage.setItem('count', num - countToDecrement);
+
+      // Show a success toast
+      toast.success(`Item removed from cart.`, { position: 'top-center', className: 'toast-success' });
+    }
+  };
+
+
+  const handleQuantityChange = (item,itemId, newQuantity) => {
+    const num=Number(localStorage.getItem('count'));
+    // localStorage.setItem('count', (num+newQuantity));
+    let p = item.productQuantity;
+    localStorage.setItem('count', num+(newQuantity-p));
     updateCartQuantity(itemId, newQuantity);
   };
 
@@ -53,30 +78,79 @@ const HomeCartView = ({
     setEnteredPromoCode(e.target.value);
   };
 
-  const applyPromoCode = () => {
-    const matchingPromoCode = promoCodes.find(
-      (code) => code.code === enteredPromoCode
+const applyPromoCode = () => {
+  const matchingPromoCode = promoCodes.find(
+    (code) => code.code === enteredPromoCode
+  );
+
+  if (matchingPromoCode) {
+    // Check if the promo code is applicable to any category in the cart
+    const isApplicableToCart = cart.some(
+      (item) =>
+        matchingPromoCode.applicableProducts &&
+        matchingPromoCode.applicableProducts.includes(item.productCategory)
     );
 
-    if (matchingPromoCode) {
-      // Apply 15% discount
+    if (isApplicableToCart) {
       const discountPercentage = matchingPromoCode.discountPercent;
-      const discountAmount =
-        (discountPercentage / 100) *
-        cart.reduce(
-          (total, item) => total + item.productPrice * item.productQuantity,
+
+      const updatedCart = cart.map((item) => {
+        // Apply discount to items in applicable categories
+        if (
+          matchingPromoCode.applicableProducts &&
+          matchingPromoCode.applicableProducts.includes(item.productCategory)
+        ) {
+          const discountedPrice =
+            item.productPrice * (1 - discountPercentage / 100);
+          return {
+            ...item,
+            discountedPrice,
+          };
+        } else {
+          return item;
+        }
+      });
+
+      // Set the updated cart
+      setUpdateCart(updatedCart);
+
+      // Update the discounted amount in the state
+      const discountAmount = updatedCart
+        .filter((item) => item.discountedPrice)
+        .reduce(
+          (total, item) =>
+            total +
+            item.productPrice * item.productQuantity -
+            item.discountedPrice * item.productQuantity,
           0
         );
-
-      // Set the discounted amount and update the total
       setDiscountedAmount(discountAmount);
-       toast.success(`Promocode applied..`, { position: 'top-center', className: 'toast-success' });
+      localStorage.setItem('discount', discountedAmount);
+      
+      toast.success(`Promocode applied..`, {
+        position: "top-center",
+        className: "toast-success",
+      });
+      setEnteredPromoCode('');
     } else {
-      // Promo code not found or invalid, reset the discounted amount
-      setDiscountedAmount(0);
-       toast.error(`Promocode not found..`, { position: 'top-center', className: 'toast-error' });
+      // Promo code is not applicable to any category in the cart
+      toast.error(`Promocode is not applicable to any item in the cart.`, {
+        position: "top-center",
+        className: "toast-error",
+      });
     }
-  };
+  } else {
+    // Promo code not found or invalid, reset the discounted amount
+    setDiscountedAmount(0);
+    toast.error(`Promocode not found..`, {
+      position: "top-center",
+      className: "toast-error",
+    });
+  }
+};
+
+
+
 
   const handleCheckout = () => {
     // Step 1: Generate a random user id using uuidv4
@@ -168,12 +242,15 @@ const HomeCartView = ({
             Quantity:{" "}
             <span>
               <input
-              style={{width:"30px"}}
+              style={{width:"50px"}}
                 type="number"
                 value={item.productQuantity}
+                max={item.productStock}
+                min={1}
                 onChange={(e) => {
                   const newQuantity = parseInt(e.target.value, 10);
                   handleQuantityChange(
+                    item,
                     item.productID,
                     isNaN(newQuantity) ? 1 : newQuantity
                   );
@@ -187,7 +264,7 @@ const HomeCartView = ({
           <div className="basket--item--remove">
             <i
               className="fas fa-trash-alt"
-              onClick={() => removeItem(item.productID)}
+              onClick={() => handleRemoveItem(item.productID)}
             ></i>
           </div>
         </div>
