@@ -97,9 +97,18 @@ const NavBar = (
             <div className="logo_container">
               <div>
                 {/* <Link to="/fashion-cube"> */}
-                <img style={{width:'100px',height:'100px'}} src={logo} />
+                <img style={{
+                width: '100px',
+                height: '100px',
+                // Media query for adjusting styles on smaller screens
+                '@media (max-width: 600px)': {
+                  width: '50px', // Adjust the width as needed for small screens
+                  height: '50px', // Adjust the height as needed for small screens
+                },
+              }} src={logo} />
                 ZEPHYR
               </div>
+
               {/* </Link> */}
             </div>
             <nav className="navbar">
@@ -171,12 +180,12 @@ const NavBar = (
                   {/* </a> */}
                 </li>
               </ul>
-              <div
+              {/* <div
                 className="hamburger_container"
                 // onClick={() => this.handleMenuClicked()}
               >
                 <i className="fa fa-bars" aria-hidden="true"></i>
-              </div>
+              </div> */}
             </nav>
           </div>
         </div>

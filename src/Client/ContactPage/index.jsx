@@ -88,7 +88,7 @@ const handleSubmit = (e) => {
         !hideHeader.includes(location.pathname)
          && (
             <header className="header trans_300">
-              <TopNavBar className={topHeaderClass} />
+              {/* <TopNavBar className={topHeaderClass} /> */}
               <NavBar />
             </header>
           )}
@@ -133,20 +133,20 @@ const handleSubmit = (e) => {
       </form>
 
       {/* Rectangular Box */}
-      <div style={{ display: 'flex', backgroundColor: '#3E2723', padding: '5px',marginBottom:'10px', marginTop: '-20px', borderRadius: '8px', color: '#fff', width: '58%', marginLeft: 'auto', marginRight: 'auto' }}>
-        <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '10px' }}>
+      <div className="contact-info" style={{ display: 'flex', backgroundColor: '#3E2723', padding: '5px',marginBottom:'10px', marginTop: '-20px', borderRadius: '8px', color: '#fff', width: '58%', marginLeft: 'auto', marginRight: 'auto' }}>
+        <div className="info-item" style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '10px' }}>
           <LocationOnIcon style={{ fontSize: '2rem', marginBottom: '8px' }} />
           <Typography style={{color:'white'}} variant="h6">Location</Typography>
           <Typography style={{fontSize:'1rem'}} variant="body1">123 Main Street</Typography>
           <Typography  style={{fontSize:'1rem'}} variant="body1">City, Country</Typography>
         </div>
-        <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '10px' }}>
+        <div className="info-item" style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '10px' }}>
           <AccessTimeIcon style={{ fontSize: '2rem', marginBottom: '8px' }} />
           <Typography style={{color:'white'}} variant="h6">Hours</Typography>
           <Typography  style={{fontSize:'1rem'}} variant="body1">Weekdays: 9 AM - 6 PM</Typography>
           <Typography  style={{fontSize:'1rem'}} variant="body1">Saturday: 10 AM - 4 PM</Typography>
         </div>
-        <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '10px' }}>
+        <div className="info-item" style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '10px' }}>
           <PhoneIcon style={{ fontSize: '2rem', marginBottom: '8px' }} />
           <Typography style={{color:'white'}} variant="h6">Call Us</Typography>
           <Typography  style={{fontSize:'1rem'}} variant="body1">+1 (123) 456-7890</Typography>

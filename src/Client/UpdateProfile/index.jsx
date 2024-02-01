@@ -162,7 +162,7 @@ const handleInputChange = (field, value) => {
         !hideHeader.includes(location.pathname)
          && (
             <header className="header trans_300">
-              <TopNavBar className={topHeaderClass} />
+              {/* <TopNavBar className={topHeaderClass} /> */}
               <NavBar />
             </header>
           )}

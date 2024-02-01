@@ -43,7 +43,7 @@ const BaseLayout = (props) => {
           const snapshot = await get(recommendationsRef);
       
           if (snapshot.exists()) {
-            console.log("recs exist")
+            // console.log("recs exist")
             const data = snapshot.val();
             console.log("rec data",data)
             const productIDs = Object.values(data);
@@ -65,9 +65,9 @@ const BaseLayout = (props) => {
             const imagesSnapshot = await get(imagesRef);
       
             if (imagesSnapshot.exists()) {
-              // console.log("recs exist")
+              console.log("recs exist")
               const storage = getStorage();
-              // console.log("recs exist")
+              console.log("recs exist")
               const imagesData = imagesSnapshot.val();
               const imageURLs = [];
 
@@ -130,7 +130,7 @@ const BaseLayout = (props) => {
         !hideHeader.includes(location.pathname)
          && (
             <header className="header trans_300">
-              <TopNavBar className={topHeaderClass} />
+              {/* <TopNavBar className={topHeaderClass} /> */}
               <NavBar />
             </header>
           )}
@@ -150,7 +150,10 @@ const BaseLayout = (props) => {
               justifyContent: "center",
             }}
           >
-            <h2 style={{fontSize:"3rem"}} >RECOMMENDATIONS!</h2>
+            <h2 style={{
+            fontSize: "6vw", // Using viewport width unit for responsive font size
+            // Add any other styles as needed
+          }}>RECOMMENDATIONS!</h2>
           </div>
           {/* data-aos="fade-up" */}
           <div 

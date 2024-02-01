@@ -1,4 +1,5 @@
  import React from "react";
+import { Link } from "react-router-dom";
 
  const Footer = (props) => {
    return (
@@ -9,13 +10,13 @@
              <div className="footer_nav_container d-flex flex-sm-row flex-column align-items-center justify-content-lg-start justify-content-center text-center">
                <ul className="footer_nav">
                  <li>
-                   <a href="#">Blog</a>
+                   <Link to="/">Home</Link>
                  </li>
-                 <li>
+                 {/* <li>
                    <a href="#">FAQs</a>
-                 </li>
+                 </li> */}
                  <li>
-                   <a href="contact.html">Contact us</a>
+                    <Link to="/contact">Contact</Link>
                  </li>
                </ul>
              </div>

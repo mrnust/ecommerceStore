@@ -49,6 +49,9 @@ const Slider = (props) => {
             className="d-block w-100 main_slider"
             style={{
               backgroundImage: `url(${imageUrl})`,
+              backgroundSize: "cover", // Ensure the image covers the entire container
+              backgroundPosition: "center", // Center the image
+              height: "400px",
             }}
           >
             {/* <img

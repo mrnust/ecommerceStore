@@ -11,7 +11,8 @@ import NavBar from '../NavBar/NavBar';
 import TopNavBar from '../TopNavBar';
 import Footer from '../Footer'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import { InputAdornment, IconButton } from '@mui/material';
+import { InputAdornment, IconButton,TextField } from '@mui/material';
+
 import MicIcon from '@mui/icons-material/Mic';
 import './CategoriesPage.css';
 // import Input from "postcss/lib/input";
@@ -229,7 +230,7 @@ useEffect(() => {
         !hideHeader.includes(location.pathname)
          && (
             <header className="header trans_300">
-              <TopNavBar className={topHeaderClass} />
+              {/* <TopNavBar className={topHeaderClass} /> */}
               <NavBar />
             </header>
           )}
@@ -244,12 +245,25 @@ useEffect(() => {
         <h1>{category}</h1>
       </div>
       <div style={{textAlign:'center',padding:'5px', margin: "20px", width: "100%", marginTop: "60px" }}>
-      <input 
-         placeholder="Search by name"
+      <TextField 
+          //  placeholder="Search by name"
+          label="Search by name"
          variant="outlined"
          value={searchTerm}
          onChange={handleSearch}
           fullWidth
+          style={{
+          padding: '10px',
+          fontSize: '16px',
+          maxWidth: '400px', // Set a maximum width for larger screens
+          margin: '0 auto', // Center the input on larger screens
+          // Media query for adjusting styles on smaller screens
+          '@media (max-width: 600px)': {
+            width: '50%', // Make it full width on small screens
+            maxWidth: '100%', // Remove max-width on small screens
+             margin: '0 auto',
+          },
+         }}
           InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -259,7 +273,7 @@ useEffect(() => {
             </InputAdornment>
           ),
         }}
-       ></input>
+       />
       </div>
       <div
         style={{

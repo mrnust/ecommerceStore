@@ -13,6 +13,12 @@ import PaymentForm from "../PaymentForm.js";
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { toast, ToastContainer } from 'react-toastify';
+import MapComponent from "./MapComponent";
+import "bootstrap/dist/css/bootstrap.min.css"; 
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+
+
 
 const OrderSummaryPage = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -23,7 +29,11 @@ const OrderSummaryPage = () => {
   const [fireBaseOrderCart, setFireBaseOrderCart] = useState([]);
   const [fireBaseOrderUser, setfireBaseOrderUser] = useState([]);
   const [isPlaceOrderDisabled, setIsPlaceOrderDisabled] = useState(false);
-  const [userdata,setuserData]=useState({})
+  const [userdata, setuserData] = useState({});
+  const [showMap, setShowMap] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
+
   const history = useHistory();
   const stripePromise = loadStripe('pk_test_51OPInkDkA3rml0kyjnxWaTMgz0upX158ixBKbPPWaYNnNGzDSzc2uJc5AIt4TUanIeWjiMN14vLqxfQbTTv2d4jU00rL21APEf');
 
@@ -107,7 +117,7 @@ const OrderSummaryPage = () => {
     };
   };
 
-  const fetchuserData = () => {
+  const fetchuserData = async() => {
   const userref = ref(database, `Users/Registered`);
 
   const handleuserdata = (snapshot) => {
@@ -143,94 +153,105 @@ const OrderSummaryPage = () => {
   };
   
 
-const Orderbutton = () => {
-  // 1) Fetch data of Cart against a particular user
-  const cartArray = JSON.parse(localStorage.getItem('SCLOCALCART'));
-  const cartItems = cartArray.map(({ productID, productQuantity ,productCategory }) => ({
-    itemID: productID,
-    quantity: productQuantity,
-    itemCategory: productCategory
-  }));
+    const Orderbutton = async () => {
+      // 1) Fetch data of Cart against a particular user
+      try {
+        
+        const cartArray = JSON.parse(localStorage.getItem('SCLOCALCART'));
+        const cartItems = cartArray.map(({ productID, productQuantity, productCategory }) => ({
+          itemID: productID,
+          quantity: productQuantity,
+          itemCategory: productCategory
+        }));
 
-  // 2) Fetch amount object from local storage
-  const amount = JSON.parse(localStorage.AMOUNT);
+        // 2) Fetch amount object from local storage
+        const amount = JSON.parse(localStorage.AMOUNT);
 
-  // 3) Generate orderId by uuid
-  const orderID = uuidv4();
-  console.log('orderid ', orderID);
+        // 3) Generate orderId by uuid
+        const orderID = uuidv4();
+        console.log('orderid ', orderID);
 
-  // 4) Get user by userID which is in local storage
-  fetchuserData();
+        // 4) Get user by userID which is in local storage
+        await fetchuserData();
 
-  // 5) Prepare order object
-  const orderObject = {
-    amount: amount,
-    cart: cartItems,
-    deliveryLocation: {
-      address: {
-        city: address,
-        general: "949494949"
-      }
-    },
-    orderID: orderID,
-    paymentMethod: paymentMethod,
-    receiver: {
-      receiverName: userdata.userName,
-      receiverPhoneNo: userdata.userPhoneNo
-    },
-    status: "PENDING",
-    timeStamp: Date.now()
-  };
-
-  // 6) Write to Firebase Orders table
-  const orderRef = ref(database, `Orders/${userId}/${orderID}`);
-  set(orderRef, orderObject)
-    .then(() => {
-      // 7) After order is placed successfully, update product stock
-      const productsRef = ref(database, "Products");
-      const productUpdates = cartItems.map((item) => {
-        const productRef = ref(database, `Products/${item.itemID}`);
-        return get(productRef)
-          .then((snapshot) => {
-            const productData = snapshot.val();
-            if (productData) {
-              const newStock = productData.productStock - item.quantity;
-              return set(productRef, { ...productData, productStock: newStock });
+        // 5) Prepare order object
+        const orderObject = {
+          amount: amount,
+          cart: cartItems,
+          deliveryLocation: {
+            address: {
+              city: address,
+              general: "949494949"
             }
-            return null;
+          },
+          orderID: orderID,
+          paymentMethod: paymentMethod,
+          receiver: {
+            receiverName: userdata.userName,
+            receiverPhoneNo: userdata.userPhoneNo
+          },
+          status: "PENDING",
+          timeStamp: Date.now()
+        };
+
+        // 6) Write to Firebase Orders table
+        const orderRef = ref(database, `Orders/${userId}/${orderID}`);
+        set(orderRef, orderObject)
+          .then(() => {
+            // 7) After order is placed successfully, update product stock
+            const productsRef = ref(database, "Products");
+            const productUpdates = cartItems.map((item) => {
+              const productRef = ref(database, `Products/${item.itemID}`);
+              return get(productRef)
+                .then((snapshot) => {
+                  const productData = snapshot.val();
+                  if (productData) {
+                    const newStock = productData.productStock - item.quantity;
+                    return set(productRef, { ...productData, productStock: newStock });
+                  }
+                  return null;
+                })
+                .catch((error) => {
+                  console.error('Error updating product stock:', error);
+                  return null;
+                });
+            });
+
+            // 8) Wait for all product stock updates to complete
+            return Promise.all(productUpdates);
+          })
+          .then(() => {
+            // 9) Order placed and product stock updated successfully
+            toast.success(`Order placed successfully`, {
+              position: 'top-center',
+              className: 'toast-success',
+            });
+
+            // Adding a delay before navigating to the next page
+            setTimeout(() => {
+              localStorage.removeItem('SCLOCALCART');
+              localStorage.removeItem('AMOUNT');
+              localStorage.setItem('count', 0);
+              history.push("/");
+            }, 3000); // Adjust the delay as needed
           })
           .catch((error) => {
-            console.error('Error updating product stock:', error);
-            return null;
+            console.error('Error saving order to Firebase:', error);
+            toast.error(`Order Failed to Placed...`, {
+              position: 'top-center',
+              className: 'toast-error',
+            });
+            // Handle the error as needed
           });
-      });
-
-      // 8) Wait for all product stock updates to complete
-      return Promise.all(productUpdates);
-    })
-    .then(() => {
-      // 9) Order placed and product stock updated successfully
-      toast.success(`Order placed successfully`, {
-        position: 'top-center',
-        className: 'toast-success',
-      });
-
-      // Adding a delay before navigating to the next page
-      setTimeout(() => {
-        localStorage.removeItem('SCLOCALCART');
-        localStorage.removeItem('AMOUNT');
-        history.push("/");
-      }, 3000); // Adjust the delay as needed
-    })
-    .catch((error) => {
-      console.error('Error saving order to Firebase:', error);
-      toast.error(`Order Failed to Placed...`, {
-        position: 'top-center',
-        className: 'toast-error',
-      });
-      // Handle the error as needed
-    });
-};
+      }
+      catch (e) {
+         toast.error(`Pls try again...`, {
+              position: 'top-center',
+              className: 'toast-error',
+            });
+      }
+    };
+  
 
 
   // const handleStripePayment = async () => {
@@ -269,6 +290,26 @@ const Orderbutton = () => {
       // history.push("/");
     }
   };
+
+   const handleLocationIconClick = () => {
+    setShowMap(true);
+  };
+
+   const handleMapClose = () => {
+    setShowMap(false);
+  };
+
+  // const handleLocationSelect = (location) => {
+  //   setSelectedLocation(location);
+  //   setShowMap(false);
+  //   // You can perform additional actions with the selected location if needed
+  // };
+  const handleLocationSelect = (selectedLocation) => {
+    // Update the state or perform any action with the selected location
+    console.log('Selected Location:', selectedLocation);
+  };
+
+
   return (
     <>
     <div style={{ marginTop: "10vh" }} className="container">
@@ -344,8 +385,50 @@ const Orderbutton = () => {
                 </Select>
               </FormControl>
               <TextField id="outlined-basic" label="City/State" variant="outlined" className="mb-4"/>
-              <TextField id="outlined-basic" label="Street Address" variant="outlined" onChange={(e) => setAddress(e.target.value)} className="mb-4"/>
-            </div>
+                <TextField id="outlined-basic" label="Street Address" variant="outlined" onChange={(e) => setAddress(e.target.value)} className="mb-4" />
+                
+                <div className="map-icon">
+                <Button onClick={handleLocationIconClick}>
+                  {/* You can use any map or location-related icon here */}
+                  🗺️ Select Location on Map
+                  </Button>
+                  <div style={{ marginTop: '30px' }}>
+                    <label>Selected Coordinates:</label>
+                    <input
+                      type="text"
+                      
+                      value={`${localStorage.getItem('longitude')},${localStorage.getItem('lattitude')}`}
+                      readOnly
+                      style={{marginTop:'20px', width: '100%', padding: '5px',fontSize:'12px' }}
+                    />
+                  </div>
+                  
+                </div>
+                
+              </div>
+              
+               <Modal open={showMap} onClose={handleMapClose}>
+                  <div>
+                    <MapComponent
+                    location={selectedLocation}
+                    showDefaultMap={true}
+                      onSelectLocation={handleLocationSelect}
+                    />
+                  </div>
+              </Modal>
+               {selectedLocation && (
+              <div style={{ marginTop: '10px' }}>
+                <label>Selected Coordinates:</label>
+                <input
+                  type="text"
+                  value={`Latitude: ${selectedLocation.latitude}, Longitude: ${selectedLocation.longitude}`}
+                  readOnly
+                  style={{ width: '100%', padding: '5px' }}
+                />
+              </div>
+            )}
+
+              
             {/* Payment Method */}
             <div className="payment-method bg-light p-4 rounded">
               <h3>Payment Method</h3>
